@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Dtos.AppUserDtos;
-using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.AppUserEntities;
 using CompanyProjectApp.Helpers;
 using Microsoft.EntityFrameworkCore;

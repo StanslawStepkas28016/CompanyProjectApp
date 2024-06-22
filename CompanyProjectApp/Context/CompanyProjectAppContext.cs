@@ -3,7 +3,7 @@ using CompanyProjectApp.Entities.ClientManagementEntities;
 using CompanyProjectApp.Entities.ProductEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CompanyProjectApp.Entities;
+namespace CompanyProjectApp.Context;
 
 public class CompanyProjectAppContext : DbContext
 {
@@ -23,17 +23,18 @@ public class CompanyProjectAppContext : DbContext
 
     public virtual DbSet<ProductDiscount> ProductDiscounts { get; set; }
 
-    public CompanyProjectAppContext()
+    /* public CompanyProjectAppContext()
     {
-    }
+    } */
 
     public CompanyProjectAppContext(DbContextOptions<CompanyProjectAppContext> options) : base(options)
     {
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // Na potrzeby testów jednostkowych, żeby nie korzystać z dwóch sterowników naraz.
+        if (!optionsBuilder.IsConfigured)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -42,7 +43,7 @@ public class CompanyProjectAppContext : DbContext
 
             optionsBuilder.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"]);
         }
-    }
+    } */
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,9 +51,8 @@ public class CompanyProjectAppContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CompanyProjectAppContext).Assembly);
 
-        /* Ważne, tutaj musi wlecieć jeszcze insert dla ProductDiscounts*/
         // Seeding, wprowadzenie danych. 
-        modelBuilder.Entity<AppUser>().HasData(
+        /*modelBuilder.Entity<AppUser>().HasData(
             new AppUser
             {
                 Login = "admin",
@@ -221,6 +221,6 @@ public class CompanyProjectAppContext : DbContext
                 ProductUpdatesToInYears = 3,
                 IsSigned = false,
             }
-        );
+        );*/
     }
 }

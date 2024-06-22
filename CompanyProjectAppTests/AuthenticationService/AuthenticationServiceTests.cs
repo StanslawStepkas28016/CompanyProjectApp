@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Dtos.AppUserDtos;
 using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.AppUserEntities;

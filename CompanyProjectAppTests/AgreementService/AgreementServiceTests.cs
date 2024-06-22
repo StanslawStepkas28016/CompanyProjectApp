@@ -1,6 +1,6 @@
 using System.Globalization;
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Dtos.ProductClientDtos;
-using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.ClientManagementEntities;
 using CompanyProjectApp.Entities.ProductEntities;
 using CompanyProjectAppTests.Setup;

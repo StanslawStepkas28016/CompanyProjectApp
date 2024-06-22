@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Entities;
 using CompanyProjectApp.Middlewares;
 using CompanyProjectApp.Services.AgreementServices;
@@ -45,11 +46,12 @@ public class Program
         builder.Services.AddHttpClient<RevenueService>();
 
         // Context configuration.
+        builder.Configuration
+            .SetBasePath(Directory.GetCurrentDirectory());
+
         builder.Services.AddDbContext<CompanyProjectAppContext>(opt =>
         {
-            var connectionString = builder
-                .Configuration
-                .GetConnectionString("ConnectionStrings:DefaultConnection");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             opt.UseSqlServer(connectionString);
         });
 
