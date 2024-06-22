@@ -156,7 +156,7 @@ public class ClientManagementService : IClientManagementService
 
         if (IsAddressCorrect(companyClientDto.Address!) == false)
         {
-            throw new AggregateException("Provided address  is incorrect!");
+            throw new AggregateException("Provided address is incorrect!");
         }
 
         if (await DoesCompanyClientExist(companyClientDto.KrsNumber!, cancellationToken))
@@ -202,12 +202,12 @@ public class ClientManagementService : IClientManagementService
 
         if (IsAddressCorrect(companyClientDto.Address!) == false)
         {
-            throw new AggregateException("Provided address  is incorrect!");
+            throw new AggregateException("Provided address is incorrect!");
         }
 
-        if (await DoesCompanyClientExist(krsNumber, cancellationToken))
+        if (await DoesCompanyClientExist(krsNumber, cancellationToken) == false)
         {
-            throw new AggregateException("A company client with the provided Krs number already exists!");
+            throw new AggregateException("A company client with the provided Krs number does not exist!");
         }
 
         var companyClient = await _context

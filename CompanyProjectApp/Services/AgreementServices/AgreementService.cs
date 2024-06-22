@@ -8,12 +8,17 @@ namespace CompanyProjectApp.Services.AgreementServices;
 
 public class AgreementService : IAgreementService
 {
-    private readonly CompanyProjectAppContext _context = new();
+    private readonly CompanyProjectAppContext _context;
+
+    public AgreementService(CompanyProjectAppContext context)
+    {
+        _context = context;
+    }
 
     public async Task<CreateAgreementResponseDto> CreateAgreement(CreateAgreementRequestDto request,
         CancellationToken cancellationToken)
     {
-        if (AreAgreementDatesWithinTheLimit(request.AgreementDateFrom, request.AgreementDateTo))
+        if (AreAgreementDatesWithinTheLimit(request.AgreementDateFrom, request.AgreementDateTo) == false)
         {
             throw new ArgumentException("Agreement date has to be between 3 and 30 days!");
         }
@@ -88,11 +93,11 @@ public class AgreementService : IAgreementService
             IdClient = request.IdClient,
             ClientType = request.ClientType,
             IdProduct = request.IdProduct,
-            ProductVersionInfo = _context.Products.Where(p => p.IdProduct == request.IdProduct)
-                .Select(p => p.VersionInfo).Single(),
+            ProductVersionInfo = await _context.Products.Where(p => p.IdProduct == request.IdProduct)
+                .Select(p => p.VersionInfo).FirstOrDefaultAsync(cancellationToken),
             AgreementDateFrom = request.AgreementDateFrom,
             AgreementDateTo = request.AgreementDateTo,
-            CalculatedPrice = calculatedPrice + 1000 * request.ProductUpdatesToInYears,
+            CalculatedPrice = calculatedPrice + (1000 * request.ProductUpdatesToInYears),
             ProductUpdatesToInYears = request.ProductUpdatesToInYears,
             IsSigned = false
         };
@@ -109,6 +114,7 @@ public class AgreementService : IAgreementService
             IdClient = agreement.IdClient,
             ClientType = agreement.ClientType,
             IdProduct = agreement.IdProduct,
+            ProductVersionInfo = agreement.ProductVersionInfo!,
             AgreementDateFrom = agreement.AgreementDateFrom,
             AgreementDateTo = agreement.AgreementDateTo,
             CalculatedPrice = agreement.CalculatedPrice,
@@ -206,7 +212,7 @@ public class AgreementService : IAgreementService
 
     private bool AreAgreementDatesWithinTheLimit(DateTime from, DateTime to)
     {
-        var days = (from - to).Days;
+        var days = (to - from).Days;
         return days is <= MaxDays and >= MinDays;
     }
 
@@ -224,9 +230,9 @@ public class AgreementService : IAgreementService
             var res = await _context
                 .PhysicalClients
                 .Where(pc => pc.IdPhysicalClient == idClient)
-                .FirstOrDefaultAsync(cancellationToken);
+                .CountAsync(cancellationToken);
 
-            return res != null;
+            return res == 1;
         }
 
         if (clientType == ClientTypes[1])
@@ -234,9 +240,9 @@ public class AgreementService : IAgreementService
             var res = await _context
                 .CompanyClients
                 .Where(cc => cc.IdCompanyClient == idClient)
-                .FirstOrDefaultAsync(cancellationToken);
+                .CountAsync(cancellationToken);
 
-            return res != null;
+            return res == 1;
         }
 
         // W razie modyfikacji (dodania nowego typu klienta) wystarczy dodać element
@@ -255,9 +261,9 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Products
             .Where(p => p.IdProduct == idProduct)
-            .FirstOrDefaultAsync(cancellationToken);
+            .CountAsync(cancellationToken);
 
-        return res != null;
+        return res == 1;
     }
 
     private async Task<bool> DoesClientAlreadyHaveAnAgreementForTheProduct(int idClient,
@@ -266,9 +272,9 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Agreements
             .Where(a => a.IdProduct == idProduct && a.IdClient == idClient)
-            .FirstOrDefaultAsync(cancellationToken);
+            .CountAsync(cancellationToken);
 
-        return res != null;
+        return res == 1;
     }
 
 
@@ -277,9 +283,9 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Agreements
             .Where(a => a.IdClient == idClient)
-            .FirstOrDefaultAsync(cancellationToken);
+            .CountAsync(cancellationToken);
 
-        return res != null;
+        return res >= 1;
     }
 
     private async Task<bool> DoesProductHaveAnyAssociatedDiscountNow(int idProduct, CancellationToken cancellationToken)
@@ -287,7 +293,6 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Products
             .Include(p => p.ProductDiscounts)
-            .ThenInclude(pd => pd.Discount)
             .Where(p =>
                 p.IdProduct == idProduct
             )

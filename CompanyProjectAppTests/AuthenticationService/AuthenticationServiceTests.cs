@@ -176,7 +176,7 @@ public class AuthenticationServiceTests
 
         var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
         {
-            var response = await _service.RefreshAppUserToken(new AppUserTokenRefreshRequest
+            await _service.RefreshAppUserToken(new AppUserTokenRefreshRequest
             {
                 RefreshToken = user.RefreshToken
             }, new CancellationToken());

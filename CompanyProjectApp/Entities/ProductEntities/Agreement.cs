@@ -10,7 +10,7 @@ public class Agreement
 
     public int IdProduct { get; set; }
 
-    public string ProductVersionInfo { get; set; }
+    public string? ProductVersionInfo { get; set; }
 
     public virtual Product Product { get; set; }
 

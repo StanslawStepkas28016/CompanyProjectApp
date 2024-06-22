@@ -26,7 +26,8 @@ public class AgreementController : ControllerBase
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    // [Authorize(Roles = "admin,regular")]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> CreateAgreement(CreateAgreementRequestDto request,
         CancellationToken cancellationToken)
