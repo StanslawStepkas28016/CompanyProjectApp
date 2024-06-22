@@ -3,13 +3,18 @@ using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.ClientManagementEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CompanyProjectApp.Services.ClientRepositories;
+namespace CompanyProjectApp.Services.ClientManagementServices;
 
 public class ClientManagementService : IClientManagementService
 {
-    private readonly CompanyProjectAppContext _context = new();
+    private readonly CompanyProjectAppContext _context;
 
-    public async Task<RegisterPhysicalClientDto> AddNewPhysicalClient(RegisterPhysicalClientDto physicalClient,
+    public ClientManagementService(CompanyProjectAppContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<AddPhysicalClientDto> AddNewPhysicalClient(AddPhysicalClientDto physicalClient,
         CancellationToken cancellationToken)
     {
         if (IsPeselCorrect(physicalClient.Pesel!) == false)
@@ -27,7 +32,7 @@ public class ClientManagementService : IClientManagementService
             throw new ArgumentException("Incorrect email provided!");
         }
 
-        if (IsProvidedPhysicalClientDataCorrect(physicalClient) == false)
+        if (IsProvidedPhysicalClientDataCorrect(physicalClient.Name!, physicalClient.Surname!) == false)
         {
             throw new ArgumentException("Surname and/or Name are incorrect!");
         }
@@ -56,7 +61,7 @@ public class ClientManagementService : IClientManagementService
         return physicalClient;
     }
 
-    public async Task<RegisterPhysicalClientDto> ModifyPhysicalClient(string physicalClientPesel,
+    public async Task<AddPhysicalClientDto> ModifyPhysicalClient(string physicalClientPesel,
         ModifyPhysicalClientDto physicalClientDto,
         CancellationToken cancellationToken)
     {
@@ -75,18 +80,14 @@ public class ClientManagementService : IClientManagementService
             throw new ArgumentException("Phone number needs to be exactly 9 digits!");
         }
 
-        if (IsProvidedPhysicalClientDataCorrect(new RegisterPhysicalClientDto
-            {
-                Name = physicalClientDto.Name,
-                Surname = physicalClientDto.Surname
-            }))
+        if (IsProvidedPhysicalClientDataCorrect(physicalClientDto.Name!, physicalClientDto.Surname!) == false)
         {
             throw new ArgumentException("Surname and/or Name are incorrect!");
         }
 
         if (await DoesPhysicalClientExist(physicalClientPesel, cancellationToken) == false)
         {
-            throw new ArgumentException("The client with the provided Pesel does not exist!");
+            throw new ArgumentException("A client with the provided Pesel does not exist!");
         }
 
         var physicalClient = await _context
@@ -101,7 +102,7 @@ public class ClientManagementService : IClientManagementService
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new RegisterPhysicalClientDto
+        return new AddPhysicalClientDto
         {
             Pesel = physicalClientPesel,
             Name = physicalClient.Name,
@@ -135,7 +136,7 @@ public class ClientManagementService : IClientManagementService
         return 1;
     }
 
-    public async Task<RegisterCompanyClientDto> AddNewCompanyClient(RegisterCompanyClientDto companyClientDto,
+    public async Task<AddCompanyClientDto> AddNewCompanyClient(AddCompanyClientDto companyClientDto,
         CancellationToken cancellationToken)
     {
         if (IsKrsCorrect(companyClientDto.KrsNumber!) == false)
@@ -180,7 +181,7 @@ public class ClientManagementService : IClientManagementService
         return companyClientDto;
     }
 
-    public async Task<RegisterCompanyClientDto> ModifyCompanyClient(string krsNumber,
+    public async Task<AddCompanyClientDto> ModifyCompanyClient(string krsNumber,
         ModifyCompanyClientDto companyClientDto,
         CancellationToken cancellationToken)
     {
@@ -220,7 +221,7 @@ public class ClientManagementService : IClientManagementService
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new RegisterCompanyClientDto
+        return new AddCompanyClientDto
         {
             KrsNumber = krsNumber,
             Address = companyClient.Address,
@@ -253,7 +254,7 @@ public class ClientManagementService : IClientManagementService
 
     private bool IsPeselCorrect(string pesel)
     {
-        return pesel.Length == 11;
+        return pesel.Length == 11 && long.TryParse(pesel, out _);
     }
 
     private bool IsPhoneNumberCorrect(int phoneNumber)
@@ -266,22 +267,19 @@ public class ClientManagementService : IClientManagementService
         return email.Contains('@') && email.Contains('.');
     }
 
-    private bool IsProvidedPhysicalClientDataCorrect(RegisterPhysicalClientDto physicalClientDto)
+    private bool IsProvidedPhysicalClientDataCorrect(string name, string surname)
     {
-        return
-            physicalClientDto.Name != "string"
-            && physicalClientDto.Name != null
-            && physicalClientDto.Surname != "string"
-            && physicalClientDto.Surname != null;
+        return !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(surname)
+                                                && name != "string" && name != "string";
     }
 
     private bool IsKrsCorrect(string krsNumber)
     {
-        return krsNumber.Length is 9 or 14;
+        return krsNumber.Length is 9 or 14 && !string.IsNullOrWhiteSpace(krsNumber) && long.TryParse(krsNumber, out _);
     }
 
     private bool IsAddressCorrect(string address)
     {
-        return address != "string";
+        return !string.IsNullOrWhiteSpace(address) && address != "string";
     }
 }

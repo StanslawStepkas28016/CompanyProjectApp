@@ -4,7 +4,7 @@ using CompanyProjectApp.Entities;
 using CompanyProjectApp.Middlewares;
 using CompanyProjectApp.Services.AgreementServices;
 using CompanyProjectApp.Services.AuthenticationServices;
-using CompanyProjectApp.Services.ClientRepositories;
+using CompanyProjectApp.Services.ClientManagementServices;
 using CompanyProjectApp.Services.IncomeServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

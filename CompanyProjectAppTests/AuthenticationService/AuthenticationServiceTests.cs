@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using CompanyProjectApp.Dtos.AppUserDtos;
 using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.AppUserEntities;
@@ -27,8 +29,6 @@ public class AuthenticationServiceTests
             Password = "Doe",
             Role = "admin"
         }, new CancellationToken());
-
-        await _context.SaveChangesAsync();
 
         var count = await _context.AppUsers.CountAsync();
         Assert.That(count, Is.EqualTo(1));
@@ -81,10 +81,10 @@ public class AuthenticationServiceTests
     public async Task LoginUserShouldReturnAccessToken()
     {
         await _service.RegisterAppUser(
-            new AppUserRegisterRequest { Login = "admin", Password = "admin", Role = "admin" },
+            new AppUserRegisterRequest { Login = "John", Password = "Doe", Role = "admin" },
             new CancellationToken());
 
-        var response = await _service.LoginAppUser(new AppUserLoginRequest { Login = "admin", Password = "admin" },
+        var response = await _service.LoginAppUser(new AppUserLoginRequest { Login = "John", Password = "Doe" },
             new CancellationToken());
 
         Assert.Multiple(() =>
@@ -93,10 +93,21 @@ public class AuthenticationServiceTests
             Assert.That(response.AccessToken, Is.Not.Null);
             Assert.That(string.IsNullOrEmpty(response.AccessToken), Is.False);
         });
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(response.AccessToken);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(jwtToken.Claims,
+                Has.Some.Matches<Claim>(c => c.Type == ClaimTypes.Name && c.Value == "John"));
+            Assert.That(jwtToken.Claims,
+                Has.Some.Matches<Claim>(c => c.Type == ClaimTypes.Role && c.Value == "admin"));
+        });
     }
 
     [Fact]
-    public Task LoginUserShouldThrowExceptionWhenNoLoginIsAssociatedWithAnyUser()
+    public Task LoginUserShouldThrowExceptionWhenLoginIsNotAssociatedWithAnyUser()
     {
         var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
         {
@@ -112,7 +123,7 @@ public class AuthenticationServiceTests
     }
 
     [Fact]
-    public async Task RefreshTokenShouldReturnAccessRefreshToken()
+    public async Task RefreshTokenShouldReturnNewRefreshToken()
     {
         var user = new AppUser
         {
@@ -141,5 +152,36 @@ public class AuthenticationServiceTests
             Assert.That(response.RefreshToken, Is.Not.Null);
             Assert.That(string.IsNullOrEmpty(response.RefreshToken), Is.False);
         });
+    }
+
+    [Fact]
+    public async Task RefreshTokenShouldThrowExceptionWhenRefreshTokenExpired()
+    {
+        var user = new AppUser
+        {
+            Login = "admin",
+            Password = "RCIeotM4kTMfWDu3bn72qgTswxobbFllt8sP1Mm5U1s=",
+            Role = "admin",
+            Salt = "fUYAuxqW54H8a69VlzikJg==",
+            RefreshToken = "OrXQIUPI69QtD5KVgI7QrFQHnwfs+8Q9mECKsLKmn80=",
+            RefreshTokenExp = new DateTime(2022, 12, 20)
+        };
+
+        await _context.AppUsers.AddAsync(
+            user
+        );
+
+        await _context.SaveChangesAsync();
+
+
+        var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
+        {
+            var response = await _service.RefreshAppUserToken(new AppUserTokenRefreshRequest
+            {
+                RefreshToken = user.RefreshToken
+            }, new CancellationToken());
+        });
+
+        Assert.That(exception.Message, Is.EqualTo("The provided refresh token has expired!"));
     }
 }

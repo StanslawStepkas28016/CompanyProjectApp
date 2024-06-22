@@ -1,6 +1,6 @@
 namespace CompanyProjectApp.Dtos.ClientManagementDtos;
 
-public class RegisterCompanyClientDto
+public class AddCompanyClientDto
 {
     public string? KrsNumber { get; set; }
 

@@ -1,5 +1,5 @@
 using CompanyProjectApp.Dtos.ClientManagementDtos;
-using CompanyProjectApp.Services.ClientRepositories;
+using CompanyProjectApp.Services.ClientManagementServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +27,7 @@ public class ClientManagementController : ControllerBase
     /// <returns></returns>
     [Authorize(Roles = "admin,regular")]
     [HttpPost("physical")]
-    public async Task<IActionResult> AddNewPhysicalClient(RegisterPhysicalClientDto physicalClient,
+    public async Task<IActionResult> AddNewPhysicalClient(AddPhysicalClientDto physicalClient,
         CancellationToken cancellationToken)
     {
         var res = await _clientManagementService.AddNewPhysicalClient(physicalClient, cancellationToken);
@@ -37,17 +37,17 @@ public class ClientManagementController : ControllerBase
     /// <summary>
     ///     Endpoint used for modifying a physical client data. Available to the admin only. 
     /// </summary>
-    /// <param name="physicalClientPesel"></param>
+    /// <param name="pesel"></param>
     /// <param name="physicalClientDto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [Authorize(Roles = "admin")]
-    [HttpPut("physical/{physicalClientPesel}")]
-    public async Task<IActionResult> ModifyPhysicalClient(string physicalClientPesel,
+    [HttpPut("physical/{pesel}")]
+    public async Task<IActionResult> ModifyPhysicalClient(string pesel,
         ModifyPhysicalClientDto physicalClientDto,
         CancellationToken cancellationToken)
     {
-        var res = await _clientManagementService.ModifyPhysicalClient(physicalClientPesel, physicalClientDto,
+        var res = await _clientManagementService.ModifyPhysicalClient(pesel, physicalClientDto,
             cancellationToken);
         return Ok(res);
     }
@@ -55,15 +55,15 @@ public class ClientManagementController : ControllerBase
     /// <summary>
     ///     Endpoint used for deleting (shallow deleting) a physical client data. Available for the admin only. 
     /// </summary>
-    /// <param name="physicalClientPesel"></param>
+    /// <param name="pesel"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [Authorize(Roles = "admin")]
-    [HttpDelete("physical/{physicalClientPesel}")]
-    public async Task<IActionResult> DeletePhysicalClient(string physicalClientPesel,
+    [HttpDelete("physical/{pesel}")]
+    public async Task<IActionResult> DeletePhysicalClient(string pesel,
         CancellationToken cancellationToken)
     {
-        await _clientManagementService.DeletePhysicalClient(physicalClientPesel, cancellationToken);
+        await _clientManagementService.DeletePhysicalClient(pesel, cancellationToken);
         return Ok("Client successfully deleted");
     }
 
@@ -75,7 +75,7 @@ public class ClientManagementController : ControllerBase
     /// <returns></returns>
     [Authorize(Roles = "admin,regular")]
     [HttpPost("company")]
-    public async Task<IActionResult> AddNewCompanyClient(RegisterCompanyClientDto companyClient,
+    public async Task<IActionResult> AddNewCompanyClient(AddCompanyClientDto companyClient,
         CancellationToken cancellationToken)
     {
         var res = await _clientManagementService.AddNewCompanyClient(companyClient, cancellationToken);

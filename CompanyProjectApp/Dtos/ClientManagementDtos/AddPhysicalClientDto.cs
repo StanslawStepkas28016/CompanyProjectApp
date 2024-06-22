@@ -1,6 +1,6 @@
 namespace CompanyProjectApp.Dtos.ClientManagementDtos;
 
-public class RegisterPhysicalClientDto
+public class AddPhysicalClientDto
 {
     public string? Pesel { get; set; }
 
