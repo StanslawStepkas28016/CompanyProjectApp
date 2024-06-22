@@ -4,6 +4,9 @@
     &lt;TestId&gt;xUnit::2F66B96B-AD63-4339-9A7D-0B6797501661::net8.0::CompanyProjectAppTests.AuthenticationService.AuthenticationServiceTests.RegisterUserShouldAddUserToDatabase&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::2F66B96B-AD63-4339-9A7D-0B6797501661::net8.0::CompanyProjectAppTests.AuthenticationService.AuthenticationServiceTests.RegisterUserWithAnIncorrectRoleShouldThrowException&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::2F66B96B-AD63-4339-9A7D-0B6797501661::net8.0::CompanyProjectAppTests.AuthenticationService.AuthenticationServiceTests.RegisterUserWithAnAlreadyExistingLoginShouldThrowException&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2F66B96B-AD63-4339-9A7D-0B6797501661::net8.0::CompanyProjectAppTests.AuthenticationService.AuthenticationServiceTests.LoginUserShouldReturnAccessToken&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2F66B96B-AD63-4339-9A7D-0B6797501661::net8.0::CompanyProjectAppTests.AuthenticationService.AuthenticationServiceTests.LoginUserShouldThrowExceptionWhenNoLoginIsAssociatedWithAnyUser&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2F66B96B-AD63-4339-9A7D-0B6797501661::net8.0::CompanyProjectAppTests.AuthenticationService.AuthenticationServiceTests.RefreshTokenShouldReturnAccessRefreshToken&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">Disabled</s:String>
