@@ -8,7 +8,7 @@ public class Payment
 
     public virtual Agreement Agreement { get; set; }
     
-    public decimal MoneyOwed { get; set; }
+    public decimal MoneyOwedFull { get; set; }
 
     public decimal MoneyPaid { get; set; }
 }

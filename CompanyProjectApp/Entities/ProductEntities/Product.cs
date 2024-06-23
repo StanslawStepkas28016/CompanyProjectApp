@@ -14,8 +14,6 @@ public class Product
 
     public decimal Price { get; set; }
 
-    public int IdDiscount { get; set; }
-
     public ICollection<ProductDiscount> ProductDiscounts { get; set; }
     
     public virtual ICollection<Agreement> Agreements { get; set; }

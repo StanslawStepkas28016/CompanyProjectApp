@@ -31,7 +31,8 @@ public class AgreementService : IAgreementService
 
         if (IsProductUpdatesToInYearsInRightFormat(request.ProductUpdatesToInYears) == false)
         {
-            throw new ArgumentException("ProductUpdatesToInYears can be between 1 and 3 years!");
+            throw new ArgumentException("ProductUpdatesToInYears can be between " + MinYears + " and " + MaxYears +
+                                        " years!");
         }
 
         if (await DoesClientExist(request.IdClient, request.ClientType, cancellationToken) ==
@@ -138,12 +139,13 @@ public class AgreementService : IAgreementService
 
         if (agreement.IsSigned)
         {
-            throw new ArgumentException("The provided agreement has been already paid for!");
+            throw new ArgumentException("The provided agreement has been already paid for (it is already signed)!");
         }
 
         if (request.Amount > agreement.CalculatedPrice)
         {
-            throw new ArgumentException("You cannot overpay for your agreement!");
+            throw new ArgumentException(
+                "You cannot overpay for your agreement (you are trying to pay more than full price)!");
         }
 
         if (DateTime.Now < agreement.AgreementDateFrom)
@@ -156,7 +158,7 @@ public class AgreementService : IAgreementService
             payment = new Payment
             {
                 IdAgreement = agreement.IdAgreement,
-                MoneyOwed = agreement.CalculatedPrice,
+                MoneyOwedFull = agreement.CalculatedPrice,
                 MoneyPaid = 0,
             };
 
@@ -181,17 +183,17 @@ public class AgreementService : IAgreementService
                 "You are late with your payment! The money you have paid, will be returned and the agreement will be dismissed!");
         }
 
-        if (request.Amount + payment.MoneyPaid > payment.MoneyOwed)
+        if (request.Amount + payment.MoneyPaid > payment.MoneyOwedFull)
         {
-            throw new ArgumentException("You cannot overpay for your agreement!");
+            throw new ArgumentException("You cannot overpay for your agreement (while paying in fractions)!");
         }
 
-        if (payment.MoneyPaid < payment.MoneyOwed)
+        if (payment.MoneyPaid < payment.MoneyOwedFull)
         {
             payment.MoneyPaid += request.Amount;
         }
 
-        if (payment.MoneyPaid == payment.MoneyOwed)
+        if (payment.MoneyPaid == payment.MoneyOwedFull)
         {
             agreement.IsSigned = true;
         }
@@ -202,7 +204,7 @@ public class AgreementService : IAgreementService
         {
             IdAgreement = payment.IdAgreement,
             IdPayment = payment.IdPayment,
-            MoneyOwed = payment.MoneyOwed,
+            MoneyOwedFull = payment.MoneyOwedFull,
             MoneyPaid = payment.MoneyPaid
         };
     }
@@ -221,7 +223,7 @@ public class AgreementService : IAgreementService
 
     private bool IsClientTypeInRightFormat(string clientType)
     {
-        return clientType.Contains(clientType);
+        return ClientTypes.Contains(clientType);
     }
 
     private async Task<bool> DoesClientExist(int idClient, string clientType, CancellationToken cancellationToken)
@@ -252,9 +254,13 @@ public class AgreementService : IAgreementService
         return false;
     }
 
+    private const int MinYears = 1;
+
+    private const int MaxYears = 3;
+
     private bool IsProductUpdatesToInYearsInRightFormat(int years)
     {
-        return years is >= 1 and <= 3;
+        return years is >= MinYears and <= MaxYears;
     }
 
     private async Task<bool> DoesProductExist(int idProduct, CancellationToken cancellationToken)

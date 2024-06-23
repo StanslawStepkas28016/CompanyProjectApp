@@ -1,4 +1,4 @@
-namespace CompanyProjectApp.Services.IncomeServices;
+namespace CompanyProjectApp.Services.RevenueServices;
 
 public interface IRevenueService
 {

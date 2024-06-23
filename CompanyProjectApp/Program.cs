@@ -6,7 +6,7 @@ using CompanyProjectApp.Middlewares;
 using CompanyProjectApp.Services.AgreementServices;
 using CompanyProjectApp.Services.AuthenticationServices;
 using CompanyProjectApp.Services.ClientManagementServices;
-using CompanyProjectApp.Services.IncomeServices;
+using CompanyProjectApp.Services.RevenueServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

@@ -36,10 +36,6 @@ public class ProductEfConfig : IEntityTypeConfiguration<Product>
             .IsRequired();
 
         builder
-            .Property(p => p.IdDiscount)
-            .IsRequired();
-        
-        builder
             .ToTable("Product");
     }
 }
