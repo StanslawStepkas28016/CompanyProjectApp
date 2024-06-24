@@ -32,7 +32,7 @@ public class RevenueController : ControllerBase
         CancellationToken cancellationToken)
     {
         var res = await _service.CalculateActualRevenueForTheWholeCompany(currencyCode, cancellationToken);
-        return Ok(res);
+        return Ok("Actual revenue for the company is equal to = " + res);
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class RevenueController : ControllerBase
         CancellationToken cancellationToken)
     {
         var res = await _service.CalculateExpectedRevenueForTheWholeCompany(currencyCode, cancellationToken);
-        return Ok(res);
+        return Ok("Expected revenue for the company is equal to = " + res);
     }
 
     /// <summary>
@@ -65,6 +65,23 @@ public class RevenueController : ControllerBase
         CancellationToken cancellationToken)
     {
         var res = await _service.CalculateActualRevenueForAProduct(productId, currencyCode, cancellationToken);
-        return Ok(res);
+        return Ok("Actual revenue for a product with IdProduct = " + productId + ", is equal to = " + res);
+    }
+
+    /// <summary>
+    ///     Endpoint used for calculating the expected revenue of a product which the company sells 
+    ///     (expected, meaning the money sum of signed and unsigned agreements for a specified product).
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <param name="currencyCode"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [Authorize(Roles = "admin,employee")]
+    [HttpGet("products/{productId:int}/expected/{currencyCode}")]
+    public async Task<IActionResult> CalculateActualExpectedForAProduct(int productId, string currencyCode,
+        CancellationToken cancellationToken)
+    {
+        var res = await _service.CalculateExpectedRevenueForAProduct(productId, currencyCode, cancellationToken);
+        return Ok("Expected revenue for a product with IdProduct = " + productId + ", is equal to = " + res);
     }
 }

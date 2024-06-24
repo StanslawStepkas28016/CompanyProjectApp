@@ -66,12 +66,35 @@ public class RevenueService : IRevenueService
             throw new ArgumentException("A product with the provided Id does not exist!");
         }
 
-        var count = await _context
+        var sumCalculatedPricesForAProduct = await _context
             .Agreements
-            .Where(a => a.IdProduct == productId && a.IsSigned)
-            .CountAsync(cancellationToken);
+            .Where(a => a.IdProduct == productId && a.IsSigned == true)
+            .SumAsync(a => a.CalculatedPrice, cancellationToken);
 
-        return (double)(count * product.Price) * exchangeRate;
+        return (double)sumCalculatedPricesForAProduct * exchangeRate;
+    }
+
+    public async Task<double> CalculateExpectedRevenueForAProduct(int productId, string currencyCode,
+        CancellationToken cancellationToken)
+    {
+        var exchangeRate = await GetExchangeRate(currencyCode, cancellationToken);
+
+        var product = await _context
+            .Products
+            .Where(p => p.IdProduct == productId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (product == null)
+        {
+            throw new ArgumentException("A product with the provided Id does not exist!");
+        }
+
+        var sumCalculatedPricesForAProduct = await _context
+            .Agreements
+            .Where(a => a.IdProduct == productId && (a.IsSigned == true || a.IsSigned == false))
+            .SumAsync(a => a.CalculatedPrice, cancellationToken);
+
+        return (double)sumCalculatedPricesForAProduct * exchangeRate;
     }
 
     public async Task<double> GetExchangeRate(string currencyCode, CancellationToken cancellationToken)
@@ -102,7 +125,7 @@ public class RevenueService : IRevenueService
         }
 
         var exchangeRate = (double)responseJson["conversion_rates"][currencyCode];
-        
+
         return exchangeRate;
     }
 }

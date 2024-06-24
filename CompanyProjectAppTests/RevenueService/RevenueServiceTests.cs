@@ -192,11 +192,10 @@ public class RevenueServiceTests
         var productRevenue = await _service.CalculateActualRevenueForAProduct(3, "USD", new CancellationToken());
 
         var apiRate = await _service.GetExchangeRate("USD", new CancellationToken());
-        var productPrice = await _context.Products.Where(p => p.IdProduct == product.IdProduct).Select(p => p.Price)
-            .SingleAsync();
-        var count = await _context.Agreements.Where(a => a.IdProduct == product.IdProduct && a.IsSigned).CountAsync();
+        var productPrice = await _context.Agreements.Where(a => a.IdProduct == product.IdProduct && a.IsSigned)
+            .SumAsync(a => a.CalculatedPrice);
 
-        Assert.That(productRevenue, Is.EqualTo(apiRate * (double)productPrice * count));
+        Assert.That(productRevenue, Is.EqualTo(apiRate * (double)productPrice));
     }
 
     [Fact]
