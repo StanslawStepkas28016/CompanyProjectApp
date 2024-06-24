@@ -407,7 +407,7 @@ public class AgreementServiceTests
         });
 
         Assert.That(exception.Message,
-            Is.EqualTo("Provided client already has an agreement for the specified product!"));
+            Is.EqualTo("Provided client already has a yet unsigned agreement for the specified product!"));
     }
 
     [Fact]

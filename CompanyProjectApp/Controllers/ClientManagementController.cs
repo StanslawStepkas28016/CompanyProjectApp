@@ -25,7 +25,7 @@ public class ClientManagementController : ControllerBase
     /// <param name="physicalClient"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpPost("physical")]
     public async Task<IActionResult> AddNewPhysicalClient(AddPhysicalClientDto physicalClient,
         CancellationToken cancellationToken)
@@ -73,7 +73,7 @@ public class ClientManagementController : ControllerBase
     /// <param name="companyClient"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpPost("company")]
     public async Task<IActionResult> AddNewCompanyClient(AddCompanyClientDto companyClient,
         CancellationToken cancellationToken)
@@ -89,7 +89,7 @@ public class ClientManagementController : ControllerBase
     /// <param name="companyClient"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin")]
     [HttpPut("company/{krsNumber}")]
     public async Task<IActionResult> ModifyCompanyClient(string krsNumber, ModifyCompanyClientDto companyClient,
         CancellationToken cancellationToken)

@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyProjectApp.Controllers;
 
+/// <summary>
+///     Controller responsible for calculating the revenue of the company and products.
+///     Providing functionalities for calculating the expected revenue as well as the actual revenue. 
+/// </summary>
 [Route("api/revenues")]
 [ApiController]
 public class RevenueController : ControllerBase
@@ -22,7 +26,7 @@ public class RevenueController : ControllerBase
     /// <param name="currencyCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpGet("company/actual/{currencyCode}")]
     public async Task<IActionResult> CalculateActualRevenueForTheWholeCompany(string currencyCode,
         CancellationToken cancellationToken)
@@ -38,7 +42,7 @@ public class RevenueController : ControllerBase
     /// <param name="currencyCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpGet("company/expected/{currencyCode}")]
     public async Task<IActionResult> CalculateExpectedRevenueForTheWholeCompany(string currencyCode,
         CancellationToken cancellationToken)
@@ -55,7 +59,7 @@ public class RevenueController : ControllerBase
     /// <param name="currencyCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpGet("products/{productId:int}/actual/{currencyCode}")]
     public async Task<IActionResult> CalculateActualRevenueForAProduct(int productId, string currencyCode,
         CancellationToken cancellationToken)

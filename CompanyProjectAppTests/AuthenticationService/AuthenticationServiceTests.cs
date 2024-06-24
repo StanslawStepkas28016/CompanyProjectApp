@@ -48,7 +48,7 @@ public class AuthenticationServiceTests
             }, new CancellationToken());
         });
 
-        Assert.That(exception.Message, Is.EqualTo("Role can be only: 'admin' or 'regular'!"));
+        Assert.That(exception.Message, Is.EqualTo("Role can be only: \'admin\' or \'client\' or \'employee\'!"));
         return Task.CompletedTask;
     }
 

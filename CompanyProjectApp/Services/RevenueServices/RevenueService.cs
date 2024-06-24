@@ -102,7 +102,7 @@ public class RevenueService : IRevenueService
         }
 
         var exchangeRate = (double)responseJson["conversion_rates"][currencyCode];
-
+        
         return exchangeRate;
     }
 }

@@ -1,7 +1,6 @@
 using CompanyProjectApp.Context;
 using CompanyProjectApp.Dtos.AgreementDtos;
 using CompanyProjectApp.Dtos.ProductClientDtos;
-using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.ProductEntities;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,10 +45,10 @@ public class AgreementService : IAgreementService
             throw new ArgumentException("Product with the provided IdProduct does not exist!");
         }
 
-        if (await DoesClientAlreadyHaveAnAgreementForTheProduct(request.IdClient, request.IdProduct,
+        if (await DoesClientAlreadyHaveAnUnsignedAgreementForTheProduct(request.IdClient, request.IdProduct,
                 cancellationToken))
         {
-            throw new ArgumentException("Provided client already has an agreement for the specified product!");
+            throw new ArgumentException("Provided client already has a yet unsigned agreement for the specified product!");
         }
 
         decimal calculatedPrice;
@@ -273,12 +272,12 @@ public class AgreementService : IAgreementService
         return res == 1;
     }
 
-    private async Task<bool> DoesClientAlreadyHaveAnAgreementForTheProduct(int idClient,
+    private async Task<bool> DoesClientAlreadyHaveAnUnsignedAgreementForTheProduct(int idClient,
         int idProduct, CancellationToken cancellationToken)
     {
         var res = await _context
             .Agreements
-            .Where(a => a.IdProduct == idProduct && a.IdClient == idClient)
+            .Where(a => a.IdProduct == idProduct && a.IdClient == idClient && a.IsSigned == false)
             .CountAsync(cancellationToken);
 
         return res == 1;
