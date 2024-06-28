@@ -1,7 +1,8 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=44e9e092_002De8ff_002D4857_002Dad18_002D0387a63c1b93/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateAgreementShouldThrowExceptionWhenClientAlreadyHasAgreementForProduct" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bd6d6d72_002D7598_002D4458_002Da718_002D6b88921e3822/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;CompanyProjectAppTests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Project Location="/Users/stanislawstepka/Desktop/DYSK M/UCZELNIA/4 SEM/APBD/CompanyAppProjectAPBD/CompanyProjectAppTests" Presentation="&amp;lt;CompanyProjectAppTests&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
+	
 	
 	
 	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">Disabled</s:String>

@@ -28,7 +28,6 @@ public class RevenueService : IRevenueService
         var res
             = await _context
                 .Agreements
-                .Include(a => a.Payments)
                 .Where(a => a.IsSigned == true)
                 .Select(a => a.CalculatedPrice)
                 .SumAsync(cancellationToken);
