@@ -12,9 +12,6 @@ Kod źródłowy backendu aplikacji do zarządzania danymi firm. Aplikacja umożl
 - **Konteneryzacja:** Docker
 - **Wzorce projektowe:** Repository Pattern, Unit of Work, Dependency Injection
 
-## Schemat bazodanowy:
-(Schemat można dodać w postaci obrazu, np. `![img.png](sciezka_do_obrazka.png)`, jeśli go posiadasz)
-
 ## Dostępne funkcjonalności:
 ### Dla gościa:
 - Pobieranie listy firm
