@@ -33,19 +33,6 @@ Kod źródłowy backendu aplikacji do zarządzania danymi firm. Aplikacja umożl
 - Przykładowe dane i skrypt tworzenia bazy danych znajdują się w katalogu `/backend/src/assets`
 - Testowanie API można przeprowadzić za pomocą Postmana lub Swaggera (`/swagger` po uruchomieniu serwera)
 
-## Instrukcja uruchomienia:
-1. Sklonuj repozytorium:
-   ```sh
-   git clone https://github.com/StanslawStepkas28016/CompanyProjectApp.git
-   cd CompanyProjectApp
-   ```
-2. Skonfiguruj zmienne środowiskowe (np. w pliku `.env` lub `appsettings.json`).
-3. Uruchom aplikację przy użyciu Dockera lub lokalnie:
-   ```sh
-   dotnet run --project backend
-   ```
-4. Otwórz przeglądarkę i przejdź do `http://localhost:5000/swagger` w celu testowania API.
-
 ## Dodatkowe informacje:
 - Aplikacja wykorzystuje JWT do autoryzacji.
 - Obsługuje paginację oraz filtrowanie danych.
