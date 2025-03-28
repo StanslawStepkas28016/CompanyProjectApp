@@ -29,13 +29,6 @@ Kod źródłowy backendu aplikacji do zarządzania danymi firm. Aplikacja umożl
 - Usuwanie dowolnych firm i powiązanych danych
 - Przegląd i edycja połączeń między tabelami
 
-## API Endpoints:
-- **GET** `/api/companies` - Pobranie listy firm
-- **GET** `/api/companies/{id}` - Pobranie szczegółów firmy
-- **POST** `/api/companies` - Dodanie nowej firmy (wymaga autoryzacji)
-- **PUT** `/api/companies/{id}` - Aktualizacja danych firmy (wymaga autoryzacji)
-- **DELETE** `/api/companies/{id}` - Usunięcie firmy (wymaga autoryzacji administratora)
-
 ## Informacje dot. testowania:
 - Przykładowe dane i skrypt tworzenia bazy danych znajdują się w katalogu `/backend/src/assets`
 - Testowanie API można przeprowadzić za pomocą Postmana lub Swaggera (`/swagger` po uruchomieniu serwera)
