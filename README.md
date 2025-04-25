@@ -6,7 +6,7 @@ Kod źródłowy backendu aplikacji do zarządzania danymi firm. Aplikacja umożl
 ## Techstack i wzorce:
 - **Język programowania:** C#
 - **Framework:** ASP.NET Core
-- **Baza danych:** PostgreSQL / SQL Server
+- **Baza danych:** Microsoft SQL Server
 - **ORM:** Entity Framework Core
 - **Autoryzacja i uwierzytelnianie:** JWT
 - **Konteneryzacja:** Docker
