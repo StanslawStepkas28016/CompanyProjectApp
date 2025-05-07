@@ -1,16 +1,14 @@
 # Projekt APBD s28016 - Stanisław Stepka
 
 ## Opis projektu:
-Kod źródłowy backendu aplikacji do zarządzania danymi firm. Aplikacja umożliwia przechowywanie, przetwarzanie i zarządzanie informacjami o firmach oraz powiązanych danych.
+Kod źródłowy aplikacji typu REST API do zarządzania danymi (wykonywania operacji CRUD) firm. Aplikacja umożliwia przechowywanie, przetwarzanie i zarządzanie informacjami o firmach oraz powiązanych danych.
 
-## Techstack i wzorce:
+## Techstack:
 - **Język programowania:** C#
 - **Framework:** ASP.NET Core
 - **Baza danych:** Microsoft SQL Server
 - **ORM:** Entity Framework Core
 - **Autoryzacja i uwierzytelnianie:** JWT
-- **Konteneryzacja:** Docker
-- **Wzorce projektowe:** Repository Pattern, Unit of Work, Dependency Injection
 
 ## Dostępne funkcjonalności:
 ### Dla gościa:
