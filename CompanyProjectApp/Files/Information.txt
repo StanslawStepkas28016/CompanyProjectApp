@@ -1,4 +1,0 @@
-1. Jako że część z subskrypcją jest opcjonalna, nie implementowałem jej.
-2. Inserty (do dodania produktów, wraz z ich zniżkami) znajdują się w pliku Files/Inserts.sql.
-
-https://github.com/gagop/blueprint-hub/blob/main/Version1/src/Gakko.Tests/RecruitmentsService/RecruitmentsServiceTests.cs

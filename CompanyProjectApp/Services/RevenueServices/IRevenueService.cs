@@ -1,4 +1,4 @@
-namespace CompanyProjectApp.Services.IncomeServices;
+namespace CompanyProjectApp.Services.RevenueServices;
 
 public interface IRevenueService
 {
@@ -9,5 +9,8 @@ public interface IRevenueService
         CancellationToken cancellationToken);
 
     public Task<double> CalculateActualRevenueForAProduct(int productId, string currencyCode,
+        CancellationToken cancellationToken);
+
+    public Task<double> CalculateExpectedRevenueForAProduct(int productId, string currencyCode,
         CancellationToken cancellationToken);
 }

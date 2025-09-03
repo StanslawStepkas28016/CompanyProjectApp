@@ -1,22 +1,22 @@
 using CompanyProjectApp.Dtos.ClientManagementDtos;
 
-namespace CompanyProjectApp.Services.ClientRepositories;
+namespace CompanyProjectApp.Services.ClientManagementServices;
 
 public interface IClientManagementService
 {
-    public Task<RegisterPhysicalClientDto> AddNewPhysicalClient(RegisterPhysicalClientDto physicalClient,
+    public Task<AddPhysicalClientDto> AddNewPhysicalClient(AddPhysicalClientDto physicalClient,
         CancellationToken cancellationToken);
 
     public Task<int> DeletePhysicalClient(string physicalClientPesel, CancellationToken cancellationToken);
 
-    public Task<RegisterPhysicalClientDto> ModifyPhysicalClient(string physicalClientPesel,
+    public Task<AddPhysicalClientDto> ModifyPhysicalClient(string physicalClientPesel,
         ModifyPhysicalClientDto physicalClientDto,
         CancellationToken cancellationToken);
 
-    public Task<RegisterCompanyClientDto> AddNewCompanyClient(RegisterCompanyClientDto companyClientDto,
+    public Task<AddCompanyClientDto> AddNewCompanyClient(AddCompanyClientDto companyClientDto,
         CancellationToken cancellationToken);
 
-    public Task<RegisterCompanyClientDto> ModifyCompanyClient(string krsNumber,
+    public Task<AddCompanyClientDto> ModifyCompanyClient(string krsNumber,
         ModifyCompanyClientDto companyClientDto,
         CancellationToken cancellationToken);
 }

@@ -1,6 +1,6 @@
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Dtos.AgreementDtos;
 using CompanyProjectApp.Dtos.ProductClientDtos;
-using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.ProductEntities;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +8,17 @@ namespace CompanyProjectApp.Services.AgreementServices;
 
 public class AgreementService : IAgreementService
 {
-    private readonly CompanyProjectAppContext _context = new();
+    private readonly CompanyProjectAppContext _context;
+
+    public AgreementService(CompanyProjectAppContext context)
+    {
+        _context = context;
+    }
 
     public async Task<CreateAgreementResponseDto> CreateAgreement(CreateAgreementRequestDto request,
         CancellationToken cancellationToken)
     {
-        if (AreAgreementDatesWithinTheLimit(request.AgreementDateFrom, request.AgreementDateTo))
+        if (AreAgreementDatesWithinTheLimit(request.AgreementDateFrom, request.AgreementDateTo) == false)
         {
             throw new ArgumentException("Agreement date has to be between 3 and 30 days!");
         }
@@ -25,7 +30,8 @@ public class AgreementService : IAgreementService
 
         if (IsProductUpdatesToInYearsInRightFormat(request.ProductUpdatesToInYears) == false)
         {
-            throw new ArgumentException("ProductUpdatesToInYears can be between 1 and 3 years!");
+            throw new ArgumentException("ProductUpdatesToInYears can be between " + MinYears + " and " + MaxYears +
+                                        " years!");
         }
 
         if (await DoesClientExist(request.IdClient, request.ClientType, cancellationToken) ==
@@ -39,10 +45,10 @@ public class AgreementService : IAgreementService
             throw new ArgumentException("Product with the provided IdProduct does not exist!");
         }
 
-        if (await DoesClientAlreadyHaveAnAgreementForTheProduct(request.IdClient, request.IdProduct,
+        if (await DoesClientAlreadyHaveAnUnsignedAgreementForTheProduct(request.IdClient, request.IdProduct,
                 cancellationToken))
         {
-            throw new ArgumentException("Provided client already has an agreement for the specified product!");
+            throw new ArgumentException("Provided client already has a yet unsigned agreement for the specified product!");
         }
 
         decimal calculatedPrice;
@@ -88,11 +94,11 @@ public class AgreementService : IAgreementService
             IdClient = request.IdClient,
             ClientType = request.ClientType,
             IdProduct = request.IdProduct,
-            ProductVersionInfo = _context.Products.Where(p => p.IdProduct == request.IdProduct)
-                .Select(p => p.VersionInfo).Single(),
+            ProductVersionInfo = await _context.Products.Where(p => p.IdProduct == request.IdProduct)
+                .Select(p => p.VersionInfo).FirstOrDefaultAsync(cancellationToken),
             AgreementDateFrom = request.AgreementDateFrom,
             AgreementDateTo = request.AgreementDateTo,
-            CalculatedPrice = calculatedPrice + 1000 * request.ProductUpdatesToInYears,
+            CalculatedPrice = calculatedPrice + (1000 * request.ProductUpdatesToInYears),
             ProductUpdatesToInYears = request.ProductUpdatesToInYears,
             IsSigned = false
         };
@@ -109,6 +115,7 @@ public class AgreementService : IAgreementService
             IdClient = agreement.IdClient,
             ClientType = agreement.ClientType,
             IdProduct = agreement.IdProduct,
+            ProductVersionInfo = agreement.ProductVersionInfo!,
             AgreementDateFrom = agreement.AgreementDateFrom,
             AgreementDateTo = agreement.AgreementDateTo,
             CalculatedPrice = agreement.CalculatedPrice,
@@ -131,12 +138,13 @@ public class AgreementService : IAgreementService
 
         if (agreement.IsSigned)
         {
-            throw new ArgumentException("The provided agreement has been already paid for!");
+            throw new ArgumentException("The provided agreement has been already paid for (it is already signed)!");
         }
 
         if (request.Amount > agreement.CalculatedPrice)
         {
-            throw new ArgumentException("You cannot overpay for your agreement!");
+            throw new ArgumentException(
+                "You cannot overpay for your agreement (you are trying to pay more than full price)!");
         }
 
         if (DateTime.Now < agreement.AgreementDateFrom)
@@ -149,7 +157,7 @@ public class AgreementService : IAgreementService
             payment = new Payment
             {
                 IdAgreement = agreement.IdAgreement,
-                MoneyOwed = agreement.CalculatedPrice,
+                MoneyOwedFull = agreement.CalculatedPrice,
                 MoneyPaid = 0,
             };
 
@@ -174,17 +182,17 @@ public class AgreementService : IAgreementService
                 "You are late with your payment! The money you have paid, will be returned and the agreement will be dismissed!");
         }
 
-        if (request.Amount + payment.MoneyPaid > payment.MoneyOwed)
+        if (request.Amount + payment.MoneyPaid > payment.MoneyOwedFull)
         {
-            throw new ArgumentException("You cannot overpay for your agreement!");
+            throw new ArgumentException("You cannot overpay for your agreement (while paying in fractions)!");
         }
 
-        if (payment.MoneyPaid < payment.MoneyOwed)
+        if (payment.MoneyPaid < payment.MoneyOwedFull)
         {
             payment.MoneyPaid += request.Amount;
         }
 
-        if (payment.MoneyPaid == payment.MoneyOwed)
+        if (payment.MoneyPaid == payment.MoneyOwedFull)
         {
             agreement.IsSigned = true;
         }
@@ -195,7 +203,7 @@ public class AgreementService : IAgreementService
         {
             IdAgreement = payment.IdAgreement,
             IdPayment = payment.IdPayment,
-            MoneyOwed = payment.MoneyOwed,
+            MoneyOwedFull = payment.MoneyOwedFull,
             MoneyPaid = payment.MoneyPaid
         };
     }
@@ -206,7 +214,7 @@ public class AgreementService : IAgreementService
 
     private bool AreAgreementDatesWithinTheLimit(DateTime from, DateTime to)
     {
-        var days = (from - to).Days;
+        var days = (to - from).Days;
         return days is <= MaxDays and >= MinDays;
     }
 
@@ -214,7 +222,7 @@ public class AgreementService : IAgreementService
 
     private bool IsClientTypeInRightFormat(string clientType)
     {
-        return clientType.Contains(clientType);
+        return ClientTypes.Contains(clientType);
     }
 
     private async Task<bool> DoesClientExist(int idClient, string clientType, CancellationToken cancellationToken)
@@ -224,9 +232,9 @@ public class AgreementService : IAgreementService
             var res = await _context
                 .PhysicalClients
                 .Where(pc => pc.IdPhysicalClient == idClient)
-                .FirstOrDefaultAsync(cancellationToken);
+                .CountAsync(cancellationToken);
 
-            return res != null;
+            return res == 1;
         }
 
         if (clientType == ClientTypes[1])
@@ -234,9 +242,9 @@ public class AgreementService : IAgreementService
             var res = await _context
                 .CompanyClients
                 .Where(cc => cc.IdCompanyClient == idClient)
-                .FirstOrDefaultAsync(cancellationToken);
+                .CountAsync(cancellationToken);
 
-            return res != null;
+            return res == 1;
         }
 
         // W razie modyfikacji (dodania nowego typu klienta) wystarczy dodać element
@@ -245,9 +253,13 @@ public class AgreementService : IAgreementService
         return false;
     }
 
+    private const int MinYears = 1;
+
+    private const int MaxYears = 3;
+
     private bool IsProductUpdatesToInYearsInRightFormat(int years)
     {
-        return years is >= 1 and <= 3;
+        return years is >= MinYears and <= MaxYears;
     }
 
     private async Task<bool> DoesProductExist(int idProduct, CancellationToken cancellationToken)
@@ -255,20 +267,20 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Products
             .Where(p => p.IdProduct == idProduct)
-            .FirstOrDefaultAsync(cancellationToken);
+            .CountAsync(cancellationToken);
 
-        return res != null;
+        return res == 1;
     }
 
-    private async Task<bool> DoesClientAlreadyHaveAnAgreementForTheProduct(int idClient,
+    private async Task<bool> DoesClientAlreadyHaveAnUnsignedAgreementForTheProduct(int idClient,
         int idProduct, CancellationToken cancellationToken)
     {
         var res = await _context
             .Agreements
-            .Where(a => a.IdProduct == idProduct && a.IdClient == idClient)
-            .FirstOrDefaultAsync(cancellationToken);
+            .Where(a => a.IdProduct == idProduct && a.IdClient == idClient && a.IsSigned == false)
+            .CountAsync(cancellationToken);
 
-        return res != null;
+        return res == 1;
     }
 
 
@@ -277,9 +289,9 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Agreements
             .Where(a => a.IdClient == idClient)
-            .FirstOrDefaultAsync(cancellationToken);
+            .CountAsync(cancellationToken);
 
-        return res != null;
+        return res >= 1;
     }
 
     private async Task<bool> DoesProductHaveAnyAssociatedDiscountNow(int idProduct, CancellationToken cancellationToken)
@@ -287,7 +299,6 @@ public class AgreementService : IAgreementService
         var res = await _context
             .Products
             .Include(p => p.ProductDiscounts)
-            .ThenInclude(pd => pd.Discount)
             .Where(p =>
                 p.IdProduct == idProduct
             )

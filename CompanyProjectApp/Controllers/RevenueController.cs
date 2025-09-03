@@ -1,9 +1,13 @@
-using CompanyProjectApp.Services.IncomeServices;
+using CompanyProjectApp.Services.RevenueServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyProjectApp.Controllers;
 
+/// <summary>
+///     Controller responsible for calculating the revenue of the company and products.
+///     Providing functionalities for calculating the expected revenue as well as the actual revenue. 
+/// </summary>
 [Route("api/revenues")]
 [ApiController]
 public class RevenueController : ControllerBase
@@ -22,13 +26,13 @@ public class RevenueController : ControllerBase
     /// <param name="currencyCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpGet("company/actual/{currencyCode}")]
     public async Task<IActionResult> CalculateActualRevenueForTheWholeCompany(string currencyCode,
         CancellationToken cancellationToken)
     {
         var res = await _service.CalculateActualRevenueForTheWholeCompany(currencyCode, cancellationToken);
-        return Ok(res);
+        return Ok("Actual revenue for the company is equal to = " + res);
     }
 
     /// <summary>
@@ -38,13 +42,13 @@ public class RevenueController : ControllerBase
     /// <param name="currencyCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpGet("company/expected/{currencyCode}")]
     public async Task<IActionResult> CalculateExpectedRevenueForTheWholeCompany(string currencyCode,
         CancellationToken cancellationToken)
     {
         var res = await _service.CalculateExpectedRevenueForTheWholeCompany(currencyCode, cancellationToken);
-        return Ok(res);
+        return Ok("Expected revenue for the company is equal to = " + res);
     }
 
     /// <summary>
@@ -55,12 +59,29 @@ public class RevenueController : ControllerBase
     /// <param name="currencyCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,employee")]
     [HttpGet("products/{productId:int}/actual/{currencyCode}")]
     public async Task<IActionResult> CalculateActualRevenueForAProduct(int productId, string currencyCode,
         CancellationToken cancellationToken)
     {
         var res = await _service.CalculateActualRevenueForAProduct(productId, currencyCode, cancellationToken);
-        return Ok(res);
+        return Ok("Actual revenue for a product with IdProduct = " + productId + ", is equal to = " + res);
+    }
+
+    /// <summary>
+    ///     Endpoint used for calculating the expected revenue of a product which the company sells 
+    ///     (expected, meaning the money sum of signed and unsigned agreements for a specified product).
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <param name="currencyCode"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [Authorize(Roles = "admin,employee")]
+    [HttpGet("products/{productId:int}/expected/{currencyCode}")]
+    public async Task<IActionResult> CalculateActualExpectedForAProduct(int productId, string currencyCode,
+        CancellationToken cancellationToken)
+    {
+        var res = await _service.CalculateExpectedRevenueForAProduct(productId, currencyCode, cancellationToken);
+        return Ok("Expected revenue for a product with IdProduct = " + productId + ", is equal to = " + res);
     }
 }

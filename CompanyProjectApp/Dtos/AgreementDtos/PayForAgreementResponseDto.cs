@@ -6,7 +6,7 @@ public class PayForAgreementResponseDto
 
     public int IdAgreement { get; set; }
 
-    public decimal MoneyOwed { get; set; }
+    public decimal MoneyOwedFull { get; set; }
 
     public decimal MoneyPaid { get; set; }
 }

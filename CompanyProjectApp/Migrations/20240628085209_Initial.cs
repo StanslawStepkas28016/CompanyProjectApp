@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ProjektAPBDs28016.Migrations
+namespace CompanyProjectApp.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -89,8 +89,7 @@ namespace ProjektAPBDs28016.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VersionInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IdDiscount = table.Column<int>(type: "int", nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -155,7 +154,7 @@ namespace ProjektAPBDs28016.Migrations
                     IdPayment = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdAgreement = table.Column<int>(type: "int", nullable: false),
-                    MoneyOwed = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MoneyOwedFull = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MoneyPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -208,12 +207,12 @@ namespace ProjektAPBDs28016.Migrations
 
             migrationBuilder.InsertData(
                 table: "Product",
-                columns: new[] { "IdProduct", "Category", "Description", "IdDiscount", "Name", "Price", "VersionInfo" },
+                columns: new[] { "IdProduct", "Category", "Description", "Name", "Price", "VersionInfo" },
                 values: new object[,]
                 {
-                    { 1, "Software", "Python IDE (Pycharm) by Jetbrains", 1, "Pycharm", 5000m, "1.2" },
-                    { 2, "Software", "Java IDE (Intellij) by Jetbrains", 1, "Intellij", 2500m, "15.4" },
-                    { 3, "Software", "C# IDE (Rider) by Jetbrains", 1, "Rider", 6500m, "10.9" }
+                    { 1, "Software", "Python IDE (Pycharm) by Jetbrains", "Pycharm", 5000m, "1.2" },
+                    { 2, "Software", "Java IDE (Intellij) by Jetbrains", "Intellij", 2500m, "15.4" },
+                    { 3, "Software", "C# IDE (Rider) by Jetbrains", "Rider", 6500m, "10.9" }
                 });
 
             migrationBuilder.InsertData(
@@ -223,6 +222,16 @@ namespace ProjektAPBDs28016.Migrations
                 {
                     { 1, new DateTime(2024, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 3400m, "physical", 1, 2, false, 3, "10.9" },
                     { 2, new DateTime(2023, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 3400m, "physical", 2, 2, false, 3, "10.9" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Product_Discount",
+                columns: new[] { "IdDiscount", "IdProduct" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 1, 2 },
+                    { 2, 3 }
                 });
 
             migrationBuilder.CreateIndex(

@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Dtos.AppUserDtos;
-using CompanyProjectApp.Entities;
 using CompanyProjectApp.Entities.AppUserEntities;
 using CompanyProjectApp.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +33,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (IsProvidedRoleWithinTheAppConstraints(request.Role) == false)
         {
-            throw new ArgumentException("Role can be only: \'admin\' or \'regular\'!");
+            throw new ArgumentException("Role can be only: \'admin\' or \'client\' or \'employee\'!");
         }
 
         var hashedPasswordAndSalt = SecurityHelper.GetHashedPasswordAndSalt(request.Password);
@@ -175,7 +175,7 @@ public class AuthenticationService : IAuthenticationService
         return res != null;
     }
 
-    private static readonly List<string> AvailableRoles = ["admin", "regular"];
+    private static readonly List<string> AvailableRoles = ["admin", "client", "employee"];
 
     private bool IsProvidedRoleWithinTheAppConstraints(string role)
     {

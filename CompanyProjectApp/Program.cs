@@ -1,11 +1,12 @@
 using System.Reflection;
 using System.Text;
+using CompanyProjectApp.Context;
 using CompanyProjectApp.Entities;
 using CompanyProjectApp.Middlewares;
 using CompanyProjectApp.Services.AgreementServices;
 using CompanyProjectApp.Services.AuthenticationServices;
-using CompanyProjectApp.Services.ClientRepositories;
-using CompanyProjectApp.Services.IncomeServices;
+using CompanyProjectApp.Services.ClientManagementServices;
+using CompanyProjectApp.Services.RevenueServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -45,11 +46,12 @@ public class Program
         builder.Services.AddHttpClient<RevenueService>();
 
         // Context configuration.
+        builder.Configuration
+            .SetBasePath(Directory.GetCurrentDirectory());
+
         builder.Services.AddDbContext<CompanyProjectAppContext>(opt =>
         {
-            var connectionString = builder
-                .Configuration
-                .GetConnectionString("ConnectionStrings:DefaultConnection");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             opt.UseSqlServer(connectionString);
         });
 

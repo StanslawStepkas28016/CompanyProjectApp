@@ -20,7 +20,7 @@ public class PaymentEfConfig : IEntityTypeConfiguration<Payment>
             .IsRequired();
 
         builder
-            .Property(p => p.MoneyOwed)
+            .Property(p => p.MoneyOwedFull)
             .IsRequired();
 
         builder

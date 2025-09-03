@@ -26,7 +26,7 @@ public class AgreementController : ControllerBase
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,client,worker")]
     [HttpPost]
     public async Task<IActionResult> CreateAgreement(CreateAgreementRequestDto request,
         CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ public class AgreementController : ControllerBase
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [Authorize(Roles = "admin,regular")]
+    [Authorize(Roles = "admin,client")]
     [HttpPost("pay")]
     public async Task<IActionResult> PayForAgreement(PayForAgreementRequestDto request,
         CancellationToken cancellationToken)
